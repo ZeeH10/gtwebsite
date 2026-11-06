@@ -1,0 +1,21 @@
+{
+    "name": "Glad Tidings Fellowship Bethel Centre",
+    "short_name": "GT Bethel",
+    "description": "Service times, events, live streams and prayer requests for Glad Tidings Fellowship Bethel Centre, Gqeberha.",
+    "lang": "en-ZA",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#0a2370",
+    "theme_color": "#0a2370",
+    "icons": [
+        { "src": "/images/icon-192.png", "sizes": "192x192", "type": "image/png" },
+        { "src": "/images/icon-512.png", "sizes": "512x512", "type": "image/png" },
+        { "src": "/images/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    ],
+    "shortcuts": [
+        { "name": "Service times and directions", "url": "/visit", "icons": [{ "src": "/images/icon-192.png", "sizes": "192x192" }] },
+        { "name": "Ask for prayer", "url": "/prayer", "icons": [{ "src": "/images/icon-192.png", "sizes": "192x192" }] },
+        { "name": "Watch live", "url": "/watch", "icons": [{ "src": "/images/icon-192.png", "sizes": "192x192" }] }
+    ]
+}

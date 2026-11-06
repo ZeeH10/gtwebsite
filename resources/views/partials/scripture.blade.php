@@ -1,7 +1,7 @@
-<section class="bg-navy-900 py-20 text-center text-white sm:py-24" aria-label="Scripture">
-    <div class="mx-auto max-w-3xl px-4 sm:px-6" data-reveal>
-        <x-icon name="cross" class="mx-auto size-8 text-cross" stroke-width="3" />
-        <blockquote class="mt-6 font-serif text-2xl leading-relaxed text-balance italic sm:text-3xl">“{{ $verse }}”</blockquote>
-        <p class="mt-6"><span class="brush text-sm tracking-[0.2em] uppercase">{{ $ref }}</span></p>
-    </div>
+<section class="bg-navy-900 py-16 text-white sm:py-20" aria-label="Scripture">
+    <figure class="mx-auto max-w-3xl px-4 sm:px-6">
+        <x-glyph name="cross" class="size-7 text-cross" stroke-width="3" />
+        <blockquote class="mt-5 font-serif text-2xl leading-relaxed italic sm:text-3xl">“{{ $verse }}”</blockquote>
+        <figcaption class="mt-5"><span class="brush">{{ $ref }}</span></figcaption>
+    </figure>
 </section>

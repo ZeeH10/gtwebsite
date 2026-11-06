@@ -22,15 +22,20 @@ class PrayerRequestController extends Controller
             'contact' => ['nullable', 'string', 'max:150'],
             'request' => ['required', 'string', 'min:5', 'max:3000'],
             'pastors_only' => ['nullable', 'boolean'],
+            'consent' => ['accepted'],
         ], [
             'request.required' => 'Please tell us what we can pray with you about.',
+            'consent.accepted' => 'Please tick the box so we may keep your request and pray for you.',
         ]);
 
         if ($validator->fails()) {
             return redirect()->route('prayer')->withErrors($validator)->withInput();
         }
 
-        $prayer = PrayerRequest::create($validator->validated() + ['pastors_only' => $request->boolean('pastors_only')]);
+        $prayer = PrayerRequest::create(
+            collect($validator->validated())->except('consent')->all()
+            + ['pastors_only' => $request->boolean('pastors_only'), 'consent_at' => now()]
+        );
 
         // Saved first, so a mail outage never loses a request.
         if ($to = config('church.email')) {

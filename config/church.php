@@ -15,7 +15,8 @@ return [
     'phones' => ['084 610 8870', '078 293 3649'],
     'whatsapp' => '27846108870',
     'email' => env('CHURCH_EMAIL'), // receives prayer requests; set in .env
-    'facebook' => 'https://www.facebook.com/groups/gtfec',
+    'facebook' => 'https://www.facebook.com/gladtidingsfellowship.gq/', // public Page (live streams)
+    'facebook_group' => 'https://www.facebook.com/groups/gtfec',
     'youtube' => null, // PLACEHOLDER: add channel URL when the media team creates one
 
     'pastor' => [
@@ -51,12 +52,17 @@ return [
     ],
 
     'ministries' => [
-        ['name' => 'Praise & Worship', 'image' => 'gt-choir.jpg', 'text' => 'Leading the church into God’s presence through song every Sunday and at special services.'],
-        ['name' => 'Home Groups', 'image' => 'gt-homegroup.jpg', 'text' => 'Small groups meeting in homes across Gqeberha on Tuesdays for Bible study, prayer and friendship.'],
+        // Serving teams confirmed by the church; one-line descriptions are drafts to confirm. 'image' is optional.
+        ['name' => 'Praise & Worship', 'image' => 'gt-choir.jpg', 'text' => 'Leads the congregation in worship through song on Sundays and at special services.'],
+        ['name' => 'Intercession Team', 'image' => 'gt-prayer.jpg', 'text' => 'Prays for the church, its leaders, our city and every prayer request we receive.'],
+        ['name' => 'Sunday School Teachers', 'image' => 'gt-children.jpg', 'text' => 'Teach children the Bible on Sundays in a safe, caring class.'],
         ['name' => 'Youth & Campus Society', 'image' => 'gt-youth.jpg', 'text' => 'Young adults and students growing in faith together, on campus and in the city.'],
-        ['name' => 'Children’s Church', 'image' => 'gt-children.jpg', 'text' => 'Sunday school where children learn the Word in a safe, joyful and caring space.'],
-        ['name' => 'Prayer Ministry', 'image' => 'gt-prayer.jpg', 'text' => 'Standing in the gap for the church, our city and every request we receive.'],
-        ['name' => 'Evangelism & Outreach', 'image' => 'gt-worship.jpg', 'text' => 'Taking the glad tidings into Gqeberha and beyond, in obedience to the Great Commission.'],
+        ['name' => 'Ushering', 'text' => 'Welcomes people at the door, helps them find a seat and keeps the service running smoothly.'],
+        ['name' => 'Hosting Team', 'text' => 'Looks after visiting pastors and guest speakers from arrival to departure.'],
+        ['name' => 'Good Samaritans', 'text' => 'Cares for members and neighbours in need with practical help, visits and support.'],
+        ['name' => 'Media Team', 'text' => 'Runs sound, projection, live streams, photos and the church’s social media.'],
+        ['name' => 'Catering', 'text' => 'Prepares and serves food for conferences, special services and church gatherings.'],
+        ['name' => 'Maintenance', 'text' => 'Keeps the church building, grounds and equipment in good order.'],
     ],
 
     // Events split into upcoming/past automatically by date. Entries without 'poster' are PLACEHOLDERS.
@@ -73,10 +79,9 @@ return [
 
     'giving' => [
         'purposes' => ['Tithes & Offerings', 'Pastor’s Appreciation', 'Funeral Contributions', 'Conference', 'Weddings'],
-        // PLACEHOLDER bank details
-        'bank' => '[Bank name]',
-        'account_name' => 'Glad Tidings Fellowship Bethel Centre',
-        'account_number' => '[Account number]',
-        'branch_code' => '[Branch code]',
+        'bank' => 'Standard Bank',
+        'account_name' => 'Glad Tidings Fellowship',
+        'account_number' => '083 515 496',
+        'branch_code' => '051001',
     ],
 ];

@@ -9,9 +9,10 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: true,
             fonts: [
-                bunny('Montserrat', { weights: [600, 700, 800] }),
-                bunny('Source Sans 3', { weights: [400, 600] }),
-                bunny('Lora', { weights: [400, 500], styles: ['italic'] }),
+                // Wide, heavy display face: echoes the extended "FELLOWSHIP" lettering in the logo
+                bunny('Unbounded', { weights: [600, 800] }),
+                bunny('Archivo', { weights: [400, 500, 600, 700] }),
+                bunny('Source Serif 4', { weights: [400], styles: ['italic'] }),
             ],
         }),
         tailwindcss(),

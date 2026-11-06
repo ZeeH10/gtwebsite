@@ -1,133 +1,109 @@
 @php
+    use App\Models\{Event, Ministry, ServiceTime, Setting};
     $c = config('church');
-    $upcoming = collect($c['events'])->filter(fn ($e) => \Illuminate\Support\Carbon::parse($e['end'] ?? $e['date'])->endOfDay()->isFuture())->sortBy('date')->take(3);
+    $services = ServiceTime::orderBy('sort')->get();
+    $sunday = $services->firstWhere('day', 'Sunday') ?? $services->first();
+    $events = Event::upcoming()->take(4)->get();
+    $featured = $events->shift();
+    $ministries = Ministry::where('is_published', true)->whereNotNull('image')->orderBy('sort')->take(3)->get();
 @endphp
 <x-layout>
-{{-- HERO --}}
-<section class="beams relative flex min-h-svh flex-col bg-navy-900 pt-18">
-    <img src="{{ asset('images/gt-worship.jpg') }}" alt="" class="absolute inset-0 -z-10 size-full object-cover" fetchpriority="high">
-    <div class="absolute inset-0 -z-10 bg-linear-to-b from-navy-900/85 via-royal-700/55 to-navy-950/95"></div>
-    <div class="absolute inset-x-0 top-0 -z-10 h-2/3 bg-[radial-gradient(ellipse_60%_60%_at_50%_0%,rgb(140_195_255/0.4),transparent_70%)]"></div>
+{{-- HERO: the church's motto, set large, with the logo's arrow drawing across it --}}
+<section class="relative isolate flex min-h-[92svh] flex-col justify-end overflow-hidden bg-navy-900 pt-18 text-white">
+    <img src="{{ asset('images/gt-worship.jpg') }}" alt="" class="absolute inset-0 -z-20 size-full object-cover opacity-45 mix-blend-luminosity" fetchpriority="high">
+    <div class="absolute inset-0 -z-10 bg-[linear-gradient(100deg,var(--color-navy-950)_10%,rgb(10_35_112/0.75)_55%,rgb(23_71_201/0.45))]"></div>
 
-    <div class="mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center px-4 py-16 text-center sm:px-6">
-        <p class="font-serif text-lg text-gold-300 italic sm:text-xl">{{ $c['tagline'] }} <span class="not-italic text-white/75">— {{ $c['tagline_ref'] }}</span></p>
-        <h1 class="mt-6 font-display text-4xl font-extrabold tracking-tight text-balance text-white uppercase drop-shadow-lg sm:text-6xl lg:text-7xl">
-            {{ $c['name'] }}
-            <span class="mt-4 block text-xl tracking-[0.35em] text-gold-400 sm:text-3xl">{{ $c['branch'] }}</span>
-        </h1>
-        <div class="mt-8 flex items-center gap-3" aria-hidden="true">
-            <span class="h-0.5 w-20 rounded-full bg-linear-to-r from-transparent to-gold-500"></span>
-            <x-icon name="cross" class="size-6 text-cross" stroke-width="3" />
-            <span class="h-0.5 w-20 rounded-full bg-linear-to-l from-transparent to-gold-500"></span>
-        </div>
-        <p class="mt-8 max-w-2xl text-lg text-white/90 sm:text-xl">{{ $c['vision'] }}</p>
-        <div class="mt-10 flex flex-wrap justify-center gap-4">
-            <a href="{{ route('contact') }}" class="btn-gold">Plan your visit <x-icon name="arrow-right" class="size-4" /></a>
-            <a href="{{ route('prayer') }}" class="btn-outline">Send a prayer request</a>
-        </div>
-    </div>
+    {{-- Signature: the sweeping arrow from the logo (globe + arrow = "we are going") --}}
+    <svg class="arrow-draw pointer-events-none absolute top-20 right-[-3%] -z-10 w-[58%] max-w-[760px] text-gold-500 sm:top-24 sm:right-0 sm:w-[60%]" viewBox="0 0 600 420" fill="none" aria-hidden="true">
+        <path pathLength="1" d="M60 330 C 20 230, 50 110, 190 80 C 260 62, 320 60, 520 60" stroke="currentColor" stroke-width="14" stroke-linecap="round" />
+        <path class="arrow-head" pathLength="1" d="M470 14 L 548 60 L 470 106" stroke="currentColor" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
 
-    <div class="border-t border-white/15 bg-navy-950/75 backdrop-blur">
-        <ul class="mx-auto grid max-w-6xl divide-white/15 px-4 sm:grid-cols-3 sm:divide-x sm:px-6" aria-label="Weekly services">
-            @foreach ($c['services'] as $s)
-                <li class="flex items-center gap-4 py-5 sm:justify-center sm:px-4">
-                    <span class="grid size-11 place-items-center rounded-full bg-gold-500/20 text-gold-400 ring-1 ring-gold-400/40"><x-icon :name="$s['icon']" /></span>
-                    <div>
-                        <p class="font-display text-xs font-bold tracking-widest text-gold-400 uppercase">{{ $s['day'] }} · {{ $s['time'] }}</p>
-                        <p class="font-display font-bold text-white">{{ $s['name'] }}</p>
-                    </div>
-                </li>
-            @endforeach
-        </ul>
+    <div class="mx-auto w-full max-w-6xl px-4 pt-20 pb-10 sm:px-6 sm:pb-14">
+        <h1 class="text-base font-semibold text-gold-300! sm:text-lg">{{ $c['name'] }} {{ $c['branch'] }}, Gqeberha</h1>
+        <p class="mt-5 font-serif text-2xl text-white/90 italic sm:text-3xl">“Go ye therefore…”</p>
+        <p class="display mt-1 text-[clamp(2.9rem,9vw,6.5rem)] leading-[0.95]">We are<br>going.</p>
+        <p class="mt-5"><span class="brush">Matthew 28:19</span></p>
+
+        @if ($sunday)
+            <div class="mt-12 flex flex-col gap-5 border-t border-white/20 pt-6 md:flex-row md:items-center md:justify-between">
+                <div>
+                    <p class="font-display text-xl font-semibold sm:text-2xl">Join us {{ $sunday->day }}, {{ $sunday->time }}</p>
+                    <p class="mt-1 text-white/80">{{ $sunday->name }} at {{ $c['address'] }}</p>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <a href="https://www.google.com/maps/dir/?api=1&destination={{ urlencode($c['address']) }}" target="_blank" rel="noopener" class="btn-gold">Get directions</a>
+                    <a href="{{ route('connect') }}" class="btn-light">I’m new here</a>
+                </div>
+            </div>
+        @endif
     </div>
 </section>
 
 {{-- WELCOME + PASTOR --}}
-<section class="py-20 sm:py-28">
-    <div class="mx-auto grid max-w-6xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-2 lg:gap-16">
-        <div class="relative" data-reveal>
-            <img src="{{ asset('images/gt-pastor.jpg') }}" alt="A service at Bethel Centre" class="aspect-[4/3] w-full rounded-2xl object-cover shadow-xl" loading="lazy" width="1024" height="765">
-            <figure class="absolute -bottom-8 left-4 flex items-center gap-4 rounded-2xl bg-royal-700 p-3 pr-6 text-white shadow-xl sm:left-auto sm:-right-6">
-                <img src="{{ asset('images/'.$c['pastor']['image']) }}" alt="{{ $c['pastor']['name'] }}" class="size-16 rounded-xl object-cover ring-2 ring-gold-400" width="350" height="350">
-                <figcaption>
-                    <p class="font-display font-bold">{{ $c['pastor']['name'] }}</p>
-                    <p class="text-sm text-white/80">{{ $c['pastor']['title'] }}</p>
-                </figcaption>
-            </figure>
+<section class="py-20 sm:py-24">
+    <div class="mx-auto grid max-w-6xl gap-12 px-4 sm:px-6 lg:grid-cols-12 lg:gap-16">
+        <div class="lg:col-span-7">
+            <h2 class="h2">Welcome to the family</h2>
+            <p class="prose-width mt-5 text-lg">{{ $c['welcome'] }}</p>
+            <p class="prose-width mt-4">{{ $c['vision'] }}</p>
+            <a href="{{ route('about') }}" class="link mt-6 inline-block">Read our story</a>
+
+            <h2 class="h2 mt-14">Every week</h2>
+            <div class="mt-5">@include('partials.timetable')</div>
         </div>
-        <div data-reveal>
-            <p class="eyebrow">Welcome home</p>
-            <h2 class="h2">A Christ-centred family in North End, Gqeberha</h2>
-            <p class="mt-6 text-lg leading-relaxed">{{ $c['welcome'] }}</p>
-            <p class="mt-4 leading-relaxed">We exist to fulfil the Great Commission of Matthew 28:19, and our heartfelt response is simple: <strong class="text-navy-900">we are going.</strong></p>
-            <a href="{{ route('about') }}" class="btn-navy mt-8">More about us <x-icon name="arrow-right" class="size-4" /></a>
-        </div>
+        <figure class="lg:col-span-5">
+            <img src="{{ asset('images/'.$c['pastor']['image']) }}" alt="{{ Setting::get('pastor_name') }}" class="aspect-[4/5] w-full rounded-xl bg-royal object-cover object-top" width="350" height="350">
+            <figcaption class="mt-4">
+                <p class="h3">{{ Setting::get('pastor_name') }}</p>
+                <p class="text-slate-600">{{ Setting::get('pastor_title') }}</p>
+            </figcaption>
+        </figure>
     </div>
 </section>
 
-{{-- MINISTRIES PREVIEW --}}
-<section class="bg-mist py-20 sm:py-28">
+{{-- EVENTS --}}
+@if ($featured)
+<section class="bg-mist py-20 sm:py-24">
     <div class="mx-auto max-w-6xl px-4 sm:px-6">
-        <div class="flex flex-wrap items-end justify-between gap-6" data-reveal>
-            <div class="max-w-2xl">
-                <p class="eyebrow">Ministries</p>
-                <h2 class="h2">There’s a place for you to belong and serve</h2>
-            </div>
-            <a href="{{ route('ministries') }}" class="inline-flex items-center gap-1 font-display font-bold text-royal-700 hover:underline">All ministries <x-icon name="arrow-right" class="size-4" /></a>
+        <div class="flex flex-wrap items-baseline justify-between gap-4">
+            <h2 class="h2">Coming up</h2>
+            <a href="{{ route('events') }}" class="link">All events</a>
         </div>
-        <ul class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            @foreach (array_slice($c['ministries'], 0, 3) as $m)
-                @include('partials.ministry-card')
-            @endforeach
-        </ul>
-    </div>
-</section>
-
-{{-- UPCOMING EVENTS --}}
-@if ($upcoming->isNotEmpty())
-<section class="py-20 sm:py-28">
-    <div class="mx-auto max-w-6xl px-4 sm:px-6">
-        <div class="flex flex-wrap items-end justify-between gap-6" data-reveal>
+        <article class="mt-8 grid gap-8 md:grid-cols-2 md:items-center">
+            @if ($featured->image_url)
+                <img src="{{ $featured->image_url }}" alt="" class="w-full rounded-xl {{ $featured->image_is_poster ? 'object-contain bg-navy-900' : 'aspect-[4/3] object-cover' }}" loading="lazy">
+            @endif
             <div>
-                <p class="eyebrow">Events</p>
-                <h2 class="h2">What’s coming up</h2>
+                <p class="flex items-center gap-2 text-sm font-semibold text-cross"><span class="size-2 rounded-full bg-cross"></span> Next event</p>
+                <h3 class="mt-3 font-display text-2xl leading-tight font-semibold sm:text-3xl">{{ $featured->title }}</h3>
+                <p class="mt-3 text-royal-700">
+                    {{ $featured->ends_on ? $featured->starts_on->format('l j M').' to '.$featured->ends_on->format('l j M Y') : $featured->starts_on->format('l j F Y') }}@if ($featured->time), {{ $featured->time }}@endif
+                </p>
+                @if ($featured->summary) <p class="prose-width mt-4 text-lg">{{ $featured->summary }}</p> @endif
             </div>
-            <a href="{{ route('events') }}" class="inline-flex items-center gap-1 font-display font-bold text-royal-700 hover:underline">All events <x-icon name="arrow-right" class="size-4" /></a>
-        </div>
-        <ul class="mt-12 grid gap-6 md:grid-cols-3">
-            @foreach ($upcoming as $e)
-                @include('partials.event-card')
-            @endforeach
-        </ul>
+        </article>
+        @if ($events->isNotEmpty())
+            <ul class="mt-10 divide-y divide-slate-200 border-t border-slate-200">
+                @foreach ($events as $e) @include('partials.event-row') @endforeach
+            </ul>
+        @endif
     </div>
 </section>
 @endif
 
-@include('partials.scripture', ['verse' => 'For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.', 'ref' => 'John 3:16'])
-
-{{-- NEXT STEPS --}}
-<section class="py-20 sm:py-28">
+{{-- MINISTRIES --}}
+<section class="py-20 sm:py-24">
     <div class="mx-auto max-w-6xl px-4 sm:px-6">
-        <div class="max-w-2xl" data-reveal>
-            <p class="eyebrow">Next steps</p>
-            <h2 class="h2">How can we walk with you?</h2>
+        <div class="flex flex-wrap items-baseline justify-between gap-4">
+            <h2 class="h2">Find your place</h2>
+            <a href="{{ route('ministries') }}" class="link">All ministries and home groups</a>
         </div>
-        <ul class="mt-12 grid gap-6 md:grid-cols-3">
-            @foreach ([
-                ['Plan a visit', 'Service times, directions and what to expect on a Sunday.', 'contact', 'map-pin'],
-                ['Ask for prayer', 'Share a request with our pastors and prayer team.', 'prayer', 'heart'],
-                ['Give', 'Partner with the work of the ministry through your giving.', 'give', 'hand-heart'],
-            ] as [$t, $d, $r, $i])
-                <li data-reveal>
-                    <a href="{{ route($r) }}" class="group card flex h-full flex-col p-8 transition hover:-translate-y-1 hover:shadow-xl hover:">
-                        <span class="grid size-14 place-items-center rounded-2xl bg-royal-700 text-gold-400 shadow-lg"><x-icon :name="$i" class="size-6" /></span>
-                        <h3 class="mt-6 font-display text-xl font-bold text-navy-900">{{ $t }}</h3>
-                        <p class="mt-2 flex-1 text-slate-600">{{ $d }}</p>
-                        <span class="mt-6 inline-flex items-center gap-1 font-display text-sm font-bold text-royal-700 uppercase">Go <x-icon name="arrow-right" class="size-4 transition group-hover:translate-x-1" /></span>
-                    </a>
-                </li>
-            @endforeach
+        <ul class="mt-6 divide-y divide-slate-200">
+            @foreach ($ministries as $m) @include('partials.ministry-row') @endforeach
         </ul>
     </div>
 </section>
+
+@include('partials.connect-band')
 </x-layout>

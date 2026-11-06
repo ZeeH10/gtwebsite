@@ -13,11 +13,20 @@ if (toggle && menu) {
     document.addEventListener('keydown', (e) => e.key === 'Escape' && !menu.hidden && (set(false), toggle.focus()));
 }
 
-// Gentle scroll reveal (skipped entirely for reduced-motion users)
-if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    document.documentElement.classList.add('js-reveal');
-    const io = new IntersectionObserver((entries) => entries.forEach((e) => {
-        if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
-    }), { rootMargin: '0px 0px -10% 0px' });
-    document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+// PWA: install on phones + offline page (see public/sw.js)
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
 }
+
+// Click-to-load embeds (map, videos): nothing third-party loads until the visitor asks (POPIA / cookies)
+document.querySelectorAll('[data-embed]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+        const iframe = document.createElement('iframe');
+        iframe.src = btn.dataset.embed;
+        iframe.title = btn.dataset.title || '';
+        iframe.className = btn.className.replace(/\bgroup\b/, '') + ' border-0';
+        iframe.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+        iframe.allowFullscreen = true;
+        btn.replaceWith(iframe);
+    });
+});
