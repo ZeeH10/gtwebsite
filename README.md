@@ -1,6 +1,7 @@
 # Glad Tidings Fellowship – Bethel Centre website
 
-Laravel 13 + Tailwind CSS 4 (Vite). One-page site with a prayer-request form.
+Laravel 13 + Tailwind CSS 4 (Vite). Pages: Home, About, Ministries, Events, Watch, Give, Visit & Contact, Prayer request.
+Shared header/footer live in `resources/views/components/layout.blade.php`; each page is a view in `resources/views/`.
 
 ## Editing content
 Almost everything (service times, ministries, events, banking details, contacts) lives in

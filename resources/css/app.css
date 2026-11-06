@@ -3,25 +3,28 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
-/* Brand colours taken from the Glad Tidings logo (navy, sky blue, red cross) + flyer gold */
+/* Brand: logo royal blues + red cross, gold from the church posters */
 @theme {
     --font-sans: 'Source Sans 3', ui-sans-serif, system-ui, sans-serif;
     --font-display: 'Montserrat', ui-sans-serif, system-ui, sans-serif;
     --font-serif: 'Lora', Georgia, serif;
 
-    --color-navy-950: #080c26;
-    --color-navy-900: #0e1538;
-    --color-navy-800: #17245a;
-    --color-navy-700: #22347a;
-    --color-sky-400: #4fa9e0;
+    --color-navy-950: #061650;
+    --color-navy-900: #0a2370;
+    --color-navy-800: #0f3196;
+    --color-royal-700: #1747c9;
+    --color-royal-600: #1f5cf0;
+    --color-royal-500: #3a78ff;
+    --color-royal-300: #8fb4ff;
+    --color-sky-400: #5cc2ff;
     --color-sky-500: #2a93d5;
-    --color-sky-700: #1a6aa0;
-    --color-gold-300: #f2d48a;
-    --color-gold-400: #ebc05a;
-    --color-gold-500: #e0a82e;
-    --color-gold-600: #c18d17;
+    --color-gold-300: #ffdc7a;
+    --color-gold-400: #ffc93c;
+    --color-gold-500: #f5b50a;
+    --color-gold-600: #d99a00;
     --color-cross: #e31e24;
-    --color-mist: #f4f6fb;
+    --color-cross-600: #c4161c;
+    --color-mist: #eef3ff;
 }
 
 @layer base {
@@ -42,22 +45,47 @@
 }
 
 @layer components {
-    .btn-gold, .btn-navy, .btn-outline {
-        @apply inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-full px-7 font-display whitespace-nowrap text-sm font-bold uppercase tracking-wider transition duration-200;
+    /* Page banners only: royal-blue gradient with a glow from the top, like the conference poster */
+    .bg-royal {
+        background:
+            radial-gradient(ellipse 70% 55% at 50% 0%, rgb(140 195 255 / 0.45), transparent 70%),
+            linear-gradient(165deg, var(--color-navy-900) 0%, var(--color-royal-700) 55%, var(--color-royal-600) 100%);
+    }
+
+    /* Diagonal light beams (decorative) */
+    .beams { position: relative; isolation: isolate; overflow: hidden; }
+    .beams::before, .beams::after {
+        content: ''; position: absolute; top: -30%; width: 14%; height: 160%; z-index: -1; pointer-events: none;
+        background: linear-gradient(90deg, transparent, rgb(130 200 255 / 0.28), transparent);
+    }
+    .beams::before { left: 8%; transform: rotate(-22deg); }
+    .beams::after { right: 8%; transform: rotate(22deg); }
+
+    /* Gold brush-stroke highlight, as behind "JOSHUA 13:1" on the poster */
+    .brush {
+        @apply inline-block px-6 py-1 font-display font-extrabold text-navy-950;
+        background: linear-gradient(90deg, transparent, var(--color-gold-500) 10%, var(--color-gold-400) 50%, var(--color-gold-500) 90%, transparent);
+    }
+
+    .btn-gold, .btn-navy, .btn-outline, .btn-red {
+        @apply inline-flex min-h-12 cursor-pointer items-center justify-center gap-2 rounded-full px-7 font-display text-sm font-bold whitespace-nowrap uppercase tracking-wider transition duration-200;
     }
     .btn-gold { @apply bg-gold-500 text-navy-950 hover:bg-gold-400; }
-    .btn-navy { @apply bg-navy-900 text-white hover:bg-navy-700; }
+    .btn-navy { @apply bg-navy-900 text-white hover:bg-royal-700; }
+    .btn-red { @apply bg-cross text-white hover:bg-cross-600; }
     .btn-outline { @apply border-2 border-white/70 text-white hover:border-gold-400 hover:text-gold-300; }
 
     .eyebrow {
-        @apply flex items-center gap-3 font-display text-xs font-bold uppercase tracking-[0.2em] text-sky-700;
+        @apply flex items-center gap-3 font-display text-xs font-bold uppercase tracking-[0.2em] text-royal-700;
     }
-    .eyebrow::before { content: ''; @apply h-0.5 w-8 bg-gold-500; }
+    .eyebrow::before { content: ''; @apply h-0.5 w-8 rounded-full bg-cross; }
     .eyebrow-light { @apply text-gold-400; }
 
     .h2 { @apply mt-3 font-display text-3xl font-extrabold tracking-tight text-balance text-navy-900 sm:text-4xl; }
 
-    .field { @apply mt-1.5 block w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 transition placeholder:text-slate-400 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/30 focus:outline-none; }
+    .field { @apply mt-1.5 block w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 transition placeholder:text-slate-400 focus:border-royal-600 focus:ring-2 focus:ring-royal-600/25 focus:outline-none; }
+
+    .card { @apply overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200/80; }
 
     /* Scroll reveal, only when JS is on and motion is allowed (see app.js) */
     .js-reveal [data-reveal] { opacity: 0; transform: translateY(16px); transition: opacity .6s ease-out, transform .6s ease-out; }

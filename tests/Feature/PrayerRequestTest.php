@@ -10,15 +10,19 @@ class PrayerRequestTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_home_page_renders(): void
+    public function test_every_page_renders(): void
     {
-        $this->withoutVite()->get('/')->assertOk()->assertSee('Bethel Centre');
+        $this->withoutVite();
+        foreach (['/', '/about', '/ministries', '/events', '/watch', '/give', '/visit', '/prayer'] as $url) {
+            $this->get($url)->assertOk()->assertSee('Bethel Centre');
+        }
+        $this->get('/about')->assertSee('Pastor Gratitude Kudyachete');
     }
 
     public function test_prayer_request_is_saved(): void
     {
         $this->post('/prayer', ['request' => 'Please pray for my family.', 'pastors_only' => '1'])
-            ->assertRedirect()->assertSessionHas('prayer_sent');
+            ->assertRedirect('/prayer')->assertSessionHas('prayer_sent');
 
         $this->assertDatabaseHas('prayer_requests', ['request' => 'Please pray for my family.', 'pastors_only' => true]);
     }

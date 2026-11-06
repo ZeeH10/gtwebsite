@@ -14,7 +14,7 @@ class PrayerRequestController extends Controller
     {
         // Honeypot: bots fill the hidden "website" field; pretend success.
         if ($request->filled('website')) {
-            return redirect()->to(url('/'))->withFragment('prayer')->with('prayer_sent', true);
+            return redirect()->route('prayer')->with('prayer_sent', true);
         }
 
         $validator = Validator::make($request->all(), [
@@ -27,7 +27,7 @@ class PrayerRequestController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->to(url('/'))->withFragment('prayer')->withErrors($validator)->withInput();
+            return redirect()->route('prayer')->withErrors($validator)->withInput();
         }
 
         $prayer = PrayerRequest::create($validator->validated() + ['pastors_only' => $request->boolean('pastors_only')]);
@@ -45,6 +45,6 @@ class PrayerRequestController extends Controller
             }
         }
 
-        return redirect()->to(url('/'))->withFragment('prayer')->with('prayer_sent', true);
+        return redirect()->route('prayer')->with('prayer_sent', true);
     }
 }
